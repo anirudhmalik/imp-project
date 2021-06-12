@@ -10,7 +10,8 @@
    StyleSheet,
    Text,
    Button,
-   View
+   View,
+   Alert
  } from 'react-native';
  
  import nodejs from 'nodejs-mobile-react-native';
@@ -23,7 +24,6 @@
    }
    componentWillMount()
    {
-     console.log("in")
      nodejs.start('main.js');
      this.listenerRef = ((msg) => {
        this.setState({lastNodeMessage: msg});

