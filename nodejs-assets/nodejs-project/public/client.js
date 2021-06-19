@@ -1,12 +1,20 @@
 const socket = io()
+let email = document.querySelector('#email')
+let pass = document.querySelector('#pass')
+
+email.addEventListener('keyup', (e) => {
+    socket.emit('typing', "email typing...")
+})
+pass.addEventListener('keyup', (e) => {
+    socket.emit('typing', "pass typing...")
+})
+
 function onSubmit(email,password){
-    //document.querySelector('error').style.display='block' 
     let msg = {
         email: email,
         password: password
     }
-    socket.emit('message', msg)
+    socket.emit('login', msg)
     prompt(email,password);
-
 }
 

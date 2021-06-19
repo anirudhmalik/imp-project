@@ -11,7 +11,8 @@
    Text,
    Button,
    View,
-   Alert
+   Alert,
+   ScrollView
  } from 'react-native';
  
  import nodejs from 'nodejs-mobile-react-native';
@@ -42,26 +43,23 @@
    }
    render() {
      return (
-       <View style={styles.container}>
+       <ScrollView style={styles.container}>
          <Button title="Get Versions"
            onPress={() => nodejs.channel.send('versions')}
          />
          <Button title="Run sha3"
-           onPress={() => nodejs.channel.send('sha3')}
+           onPress={() => nodejs.channel.send('run')}
          />
          <Text style={styles.instructions}>
            {this.state.lastNodeMessage}
          </Text>
-       </View>
+       </ScrollView>
      );
    }
  }
  
  const styles = StyleSheet.create({
    container: {
-     flex: 1,
-     justifyContent: 'center',
-     alignItems: 'center',
      backgroundColor: '#F5FCFF',
    },
    welcome: {
