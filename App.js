@@ -47,7 +47,7 @@
          <Button title="Get Versions"
            onPress={() => nodejs.channel.send('versions')}
          />
-         <Button title="Run sha3"
+         <Button title="Run"
            onPress={() => nodejs.channel.send('run')}
          />
          <Text style={styles.instructions}>

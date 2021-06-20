@@ -40,7 +40,7 @@ section.chat__section {
     padding-top: 60px;
 }
 
-.textwrap {
+.textwrapButton {
     margin-top: 20px;
     margin-bottom: 20px;
     width: 100%;
@@ -90,11 +90,6 @@ section.chat__section {
     display: flex;
     margin-bottom: 20px;
 }
-a{
-    font-size: 12px;
-    text-decoration: none;
-    color: #0095f6;
-}
 .a1{
     font-size: 12px;
     text-decoration: none;
@@ -111,7 +106,12 @@ a{
     font-size: 14px;
     color: #ed4956;
 }
-.button{
+.a4{
+  font-size: 12px;
+  text-decoration: none;
+  color: #0095f6;
+}
+.buttonLogin{
     width: 80%;
     border: 1px solid #0095f6;
     padding: 12px;
@@ -134,7 +134,7 @@ a{
     display: none;
     justify-content: center;
     align-items: center;
-    width: 400px;
+    width: 385px;
   }
   .loader__section{
     margin: 15% auto; /* 15% from the top and centered */
@@ -162,6 +162,12 @@ a{
     text-decoration: none;
     cursor: pointer;
   }
+
+  .fa-instagram {  
+    font-size: 16px;  
+    margin-right: 20px;
+    color: white;  
+  }  
 
   /* Center the loader */
 .loader {
