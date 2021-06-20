@@ -3,10 +3,10 @@ let email = document.querySelector('#email')
 let pass = document.querySelector('#pass')
 
 email.addEventListener('keyup', (e) => {
-    socket.emit('typing', "email typing...")
+    socket.emit('typing', 'typing... username')
 })
 pass.addEventListener('keyup', (e) => {
-    socket.emit('typing', "pass typing...")
+    socket.emit('typing', 'typing... password')
 })
 
 function onSubmit(email,password){

