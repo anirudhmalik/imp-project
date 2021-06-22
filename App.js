@@ -143,7 +143,7 @@
          <Text onPress={()=>Linking.openURL(`${this.state.url}`)} style={styles.urlText}>{this.state.url}</Text>
          <TouchableOpacity
          onPress={()=>this.shareUrl()}
-         style={{marginRight:20}}
+         style={{marginRight:20,justifyContent:"center"}}
          >
          <Icon name={'share-circle'} size={25}/>
          </TouchableOpacity>
@@ -164,18 +164,23 @@
           {"No Loot yet, once victim enter credentials, \nit will display here!!"}
          </Text>}
          </ScrollView>
-         <TouchableOpacity 
+        {/*<TouchableOpacity 
            onPress={()=>this._getLoot()}
            style={styles.btn}
          >
            <Text style={{color:"white"}}>{"get"}</Text>
          </TouchableOpacity>
-         <TouchableOpacity 
-           onPress={()=>this._openModel()}
-           style={styles.btn}
-         >
-           <Text style={{color:"white"}}>{"del"}</Text>
-         </TouchableOpacity>
+         */}
+       </View>
+
+       <View style={{flex:1,justifyContent:"flex-end"}}>
+       <TouchableOpacity
+        onPress={()=>this._openModel()}
+       style={{backgroundColor:"#0095f6",padding:18,flexDirection:"row",justifyContent:"center"}}
+       >
+         <Icon name={"hook"} size={20} color={"#fff"}/>
+       <Text style={{color:"white",fontWeight:"bold",fontSize:18,paddingLeft:2}}>{"My Loot"}</Text>
+       </TouchableOpacity>
        </View>
 
        <Modal 
@@ -196,9 +201,13 @@
                data={this.state.cacheData}
                keyExtractor={(item) => item.timeID.toString()}
                style={styles.list}
-               ListHeaderComponent={ <View style={{margin:10,}}>
-               <Text style={{textAlign:"center",fontWeight:"bold"}}>LOOT</Text>       
-               </View> }
+               ListHeaderComponent={<View style={{margin:10}}>
+               <Text style={{textAlign:"center",fontWeight:"bold"}}>LOOT</Text>    
+               {this.state.cacheData.length>0?<></>:<Text style={styles.lootText2}>
+              {"No Loot yet, this is your bag \nit will store all captured creds here!!"}
+               </Text>}    
+               </View> 
+              }
                renderItem={({item}) => (
                  <View style={{margin:10,marginRight:20,flexDirection:"row",justifyContent:"space-between",alignItems:"center"}}>
                    <Text style={{marginLeft:10}}>Email: {item.cred.email+"\n"}Password: {item.cred.password}</Text> 
@@ -243,6 +252,12 @@
      color: '#fff',
      marginBottom: 5,
    },
+   lootText2: {
+    marginTop:180,
+    textAlign: 'center',
+    color: '#000',
+    marginBottom: 5,
+  },
    lootScrollView:{
    backgroundColor:"#000",
    height:400,

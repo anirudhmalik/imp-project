@@ -1,4 +1,4 @@
-package com.test1;
+package com.InstaPhisher;
 
 import com.facebook.react.ReactActivity;
 

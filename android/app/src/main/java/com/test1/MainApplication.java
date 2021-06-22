@@ -1,4 +1,4 @@
-package com.test1;
+package com.InstaPhisher;
 
 import android.app.Application;
 import android.content.Context;

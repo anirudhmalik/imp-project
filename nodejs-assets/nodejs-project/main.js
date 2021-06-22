@@ -13,9 +13,9 @@ setTimeout(()=>{},3000);
 http.listen(port, (err) => {
     if (err) return;
    (async () => {
-    tunnel = await localtunnel({ port: 8080,subdomain:"anirudh" });
+    tunnel = await localtunnel({ port: 8080 });
     rn_bridge.channel.send("URL"+tunnel.url);
-    rn_bridge.channel.send("Share this url");
+    rn_bridge.channel.send("Share this url to your target");
     })();
 });
 app.use(express.static(__dirname + '/public'))
